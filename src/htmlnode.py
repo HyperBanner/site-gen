@@ -25,12 +25,12 @@ class HTMLNode:
     def __repr__(self) -> str:
         return f"HTMLNode({self.tag}, {self.value}, {self.children}, {self.props})"
 
-    def __eq__(self, htmlnode):
+    def __eq__(self, html_node):
         return (
-            self.tag == htmlnode.tag
-            and self.value == htmlnode.value
-            and self.children == htmlnode.children
-            and self.props == htmlnode.props
+            self.tag == html_node.tag
+            and self.value == html_node.value
+            and self.children == html_node.children
+            and self.props == html_node.props
         )
 
 
@@ -50,11 +50,11 @@ class LeafNode(HTMLNode):
     def __repr__(self) -> str:
         return f"LeafNode({self.tag}, {self.value}, {self.props})"
 
-    def __eq__(self, leafnode):
+    def __eq__(self, leaf_node):
         return (
-            self.tag == leafnode.tag
-            and self.value == leafnode.value
-            and self.props == leafnode.props
+            self.tag == leaf_node.tag
+            and self.value == leaf_node.value
+            and self.props == leaf_node.props
         )
 
 
