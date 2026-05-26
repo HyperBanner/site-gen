@@ -1,5 +1,5 @@
 import unittest
-from htmlnode import HTMLNode, LeafNode
+from htmlnode import HTMLNode, LeafNode, ParentNode
 
 
 class TestHTMLNode(unittest.TestCase):
@@ -44,6 +44,31 @@ class TestLeafNode(unittest.TestCase):
         node = LeafNode("h1", "This is the headline", {"class": "header", "id": "h1"})
         self.assertEqual(
             node.to_html(), '<h1 class="header" id="h1">This is the headline</h1>'
+        )
+
+
+class TestParentNode(unittest.TestCase):
+    def test_to_html_with_children(self):
+        child_node = LeafNode("span", "child")
+        parent_node = ParentNode("div", [child_node])
+        self.assertEqual(parent_node.to_html(), "<div><span>child</span></div>")
+
+    def test_to_html_with_grandchildren(self):
+        grandchild_node = LeafNode("b", "grandchild")
+        child_node = ParentNode("span", [grandchild_node])
+        parent_node = ParentNode("div", [child_node])
+        self.assertEqual(
+            parent_node.to_html(),
+            "<div><span><b>grandchild</b></span></div>",
+        )
+
+    def test_to_html_with_grandchildren_props(self):
+        grandchild_node = LeafNode("b", "grandchild", {"class": "bold"})
+        child_node = ParentNode("span", [grandchild_node], {"class": "highlight"})
+        parent_node = ParentNode("div", [child_node], {"class": "box"})
+        self.assertEqual(
+            parent_node.to_html(),
+            '<div class="box"><span class="highlight"><b class="bold">grandchild</b></span></div>',
         )
 
 
