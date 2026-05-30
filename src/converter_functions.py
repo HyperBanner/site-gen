@@ -1,8 +1,9 @@
 from htmlnode import LeafNode
-from textnode import TextType
+from textnode import TextNode, TextType
+from parsing import split_nodes_delimiter, split_nodes_image, split_nodes_link
 
 
-def text_node_to_html_node(text_node) -> LeafNode | Exception:
+def text_node_to_html_node(text_node) -> LeafNode:
     match text_node.text_type:
         case TextType.TEXT:
             return LeafNode(None, text_node.text)
@@ -18,3 +19,13 @@ def text_node_to_html_node(text_node) -> LeafNode | Exception:
             return LeafNode("img", "", {"src": text_node.url, "alt": text_node.text})
         case _:
             raise Exception("TextNode must have a valid TextType")
+
+
+def text_to_textnodes(text: str) -> list[TextNode]:
+    node = TextNode(text, TextType.TEXT)
+    new_nodes = split_nodes_delimiter([node], "**", TextType.BOLD)
+    new_nodes = split_nodes_delimiter(new_nodes, "_", TextType.ITALIC)
+    new_nodes = split_nodes_delimiter(new_nodes, "`", TextType.CODE)
+    new_nodes = split_nodes_image(new_nodes)
+    new_nodes = split_nodes_link(new_nodes)
+    return new_nodes

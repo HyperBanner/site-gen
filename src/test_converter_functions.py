@@ -1,9 +1,9 @@
 import unittest
 from textnode import TextNode, TextType
-from converter_functions import text_node_to_html_node
+from converter_functions import text_node_to_html_node, text_to_textnodes
 
 
-class TestUtls(unittest.TestCase):
+class TestTextNodeToHTMLNode(unittest.TestCase):
     def test_text(self):
         node = TextNode("This is a text node", TextType.TEXT)
         html_node = text_node_to_html_node(node)
@@ -45,6 +45,29 @@ class TestUtls(unittest.TestCase):
         self.assertEqual(
             html_node.props,
             {"src": "/home/user/Pictures/picture.png", "alt": "This is an image node"},
+        )
+
+
+class TestTextToTextNodes(unittest.TestCase):
+    def test_conversion(self):
+        text = "This is **text** with an _italic_ word and a `code block` and an ![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg) and a [link](https://boot.dev)"
+        nodes = text_to_textnodes(text)
+        self.assertListEqual(
+            [
+                TextNode("This is ", TextType.TEXT),
+                TextNode("text", TextType.BOLD),
+                TextNode(" with an ", TextType.TEXT),
+                TextNode("italic", TextType.ITALIC),
+                TextNode(" word and a ", TextType.TEXT),
+                TextNode("code block", TextType.CODE),
+                TextNode(" and an ", TextType.TEXT),
+                TextNode(
+                    "obi wan image", TextType.IMAGE, "https://i.imgur.com/fJRm4Vk.jpeg"
+                ),
+                TextNode(" and a ", TextType.TEXT),
+                TextNode("link", TextType.LINK, "https://boot.dev"),
+            ],
+            nodes,
         )
 
 
