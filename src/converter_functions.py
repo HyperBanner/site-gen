@@ -2,7 +2,7 @@ from htmlnode import LeafNode
 from textnode import TextType
 
 
-def text_node_to_html_node(text_node) -> LeafNode:
+def text_node_to_html_node(text_node) -> LeafNode | Exception:
     match text_node.text_type:
         case TextType.TEXT:
             return LeafNode(None, text_node.text)
