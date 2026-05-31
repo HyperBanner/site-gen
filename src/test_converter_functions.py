@@ -4,6 +4,8 @@ from converter_functions import (
     text_node_to_html_node,
     text_to_textnodes,
     markdown_to_blocks,
+    block_to_block_type,
+    BlockType,
 )
 
 
@@ -95,6 +97,78 @@ This is the same paragraph on a new line
                 "- This is a list\n- with items",
             ],
         )
+
+
+class TestBlockToBlockType(unittest.TestCase):
+    def test_heading(self):
+        block = "# This is a heading"
+        block2 = "## This is a heading"
+        block3 = "### This is a heading"
+        block4 = "#### This is a heading"
+        block5 = "##### This is a heading"
+        block6 = "###### This is a heading"
+        block7 = "####### This is not a heading"
+        self.assertEqual(block_to_block_type(block), BlockType.HEADING)
+        self.assertEqual(block_to_block_type(block2), BlockType.HEADING)
+        self.assertEqual(block_to_block_type(block3), BlockType.HEADING)
+        self.assertEqual(block_to_block_type(block4), BlockType.HEADING)
+        self.assertEqual(block_to_block_type(block5), BlockType.HEADING)
+        self.assertEqual(block_to_block_type(block6), BlockType.HEADING)
+        self.assertEqual(block_to_block_type(block7), BlockType.PARAGRAPH)
+
+    def test_code(self):
+        block = """```
+This is a code block.
+Imagine some code here.
+```"""
+        block2 = """```
+This is an unclosed code block."""
+        self.assertEqual(block_to_block_type(block), BlockType.CODE)
+        self.assertNotEqual(block_to_block_type(block2), BlockType.CODE)
+
+    def test_quote(self):
+        block = """> This is a quote block
+> There will be quotes here.
+>I don't need to put a space after the >."""
+        block2 = """> This is a quote block.
+Oops I forgot to put a > here.
+> This time i remembered."""
+        block3 = """> This is meant to be a quote block.
+- I accidentally put a different thing at the start of the line.
+> We are back to putting the correct symbol."""
+        self.assertEqual(block_to_block_type(block), BlockType.QUOTE)
+        self.assertNotEqual(block_to_block_type(block2), BlockType.QUOTE)
+        self.assertNotEqual(block_to_block_type(block3), BlockType.QUOTE)
+
+    def test_ul(self):
+        block = """- This is a list
+- An unordered one
+- This one doesn't involve numbers"""
+        block2 = """- This is a list
+Oh but oops i forgot the -
+- Here i remembered"""
+        self.assertEqual(block_to_block_type(block), BlockType.UNORDERED_LIST)
+        self.assertNotEqual(block_to_block_type(block2), BlockType.UNORDERED_LIST)
+
+    def test_ol(self):
+        block = """1. This is an ordered list.
+2. With incrementing numbers.
+3. I know how to count."""
+        block2 = """1. This is an ordered list.
+3. This time, I don't know how to count
+2. Don't blame me."""
+        block3 = """1. This is an ordered list
+2.I didn't put a space here.
+3. I did put a space here."""
+        self.assertEqual(block_to_block_type(block), BlockType.ORDERED_LIST)
+        self.assertNotEqual(block_to_block_type(block2), BlockType.ORDERED_LIST)
+        self.assertNotEqual(block_to_block_type(block3), BlockType.ORDERED_LIST)
+
+    def test_paragraph(self):
+        block = "This is just a normal paragraph."
+        block2 = "# This is a heading tho."
+        self.assertEqual(block_to_block_type(block), BlockType.PARAGRAPH)
+        self.assertNotEqual(block_to_block_type(block2), BlockType.PARAGRAPH)
 
 
 if __name__ == "__main__":

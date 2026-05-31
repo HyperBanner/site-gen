@@ -1,6 +1,17 @@
+from enum import Enum
 from htmlnode import LeafNode
 from textnode import TextNode, TextType
 from parsing import split_nodes_delimiter, split_nodes_image, split_nodes_link
+
+
+# enum for block_to_block_type
+class BlockType(Enum):
+    PARAGRAPH = "paragraph"
+    HEADING = "heading"
+    CODE = "code"
+    QUOTE = "quote"
+    UNORDERED_LIST = "unordered_list"
+    ORDERED_LIST = "ordered_list"
 
 
 def text_node_to_html_node(text_node) -> LeafNode:
@@ -39,3 +50,43 @@ def markdown_to_blocks(markdown: str) -> list[str]:
         if stripped != "":
             blocks.append(stripped)
     return blocks
+
+
+def block_to_block_type(block: str) -> BlockType:
+    if (
+        block.startswith("# ")
+        or block.startswith("## ")
+        or block.startswith("### ")
+        or block.startswith("#### ")
+        or block.startswith("##### ")
+        or block.startswith("###### ")
+    ):
+        return BlockType.HEADING
+
+    if block.startswith("```\n") and block.endswith("```"):
+        return BlockType.CODE
+
+    lines = block.split("\n")
+
+    count = 0
+    for line in lines:
+        if line.startswith(">"):
+            count += 1
+    if count == len(lines):
+        return BlockType.QUOTE
+
+    count = 0
+    for line in lines:
+        if line.startswith("- "):
+            count += 1
+    if count == len(lines):
+        return BlockType.UNORDERED_LIST
+
+    count = 0
+    for i in range(1, len(lines) + 1):
+        if lines[i - 1].startswith(f"{i}. "):
+            count += 1
+    if count == len(lines):
+        return BlockType.ORDERED_LIST
+
+    return BlockType.PARAGRAPH
