@@ -1,18 +1,22 @@
 import os
 import shutil
+import sys
 from pathlib import Path
 from generator_functions import generate_pages_recursive
 
 
 def main() -> None:
+    basepath = "/"
+    if sys.argv:
+        basepath = sys.argv[0]
     # paths
     static = Path(__file__).resolve().parent.parent / "static"
-    public = Path(__file__).resolve().parent.parent / "public"
+    docs = Path(__file__).resolve().parent.parent / "docs"
     content = Path(__file__).resolve().parent.parent / "content"
     template = Path(__file__).resolve().parent.parent / "template.html"
 
-    setup_static_files(static, public)
-    generate_pages_recursive(content, template, public)
+    setup_static_files(static, docs)
+    generate_pages_recursive(content, template, docs, basepath)
 
 
 def setup_static_files(static_dir, public_dir) -> None:
