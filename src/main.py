@@ -1,20 +1,21 @@
 import os
 import shutil
 from pathlib import Path
-from generator_functions import generate_page
+from generator_functions import generate_pages_recursive
 
 
 def main() -> None:
+    # paths
     static = Path(__file__).resolve().parent.parent / "static"
     public = Path(__file__).resolve().parent.parent / "public"
-    content = Path(__file__).resolve().parent.parent / "content" / "index.md"
+    content = Path(__file__).resolve().parent.parent / "content"
     template = Path(__file__).resolve().parent.parent / "template.html"
-    public_file = Path(__file__).resolve().parent.parent / "public" / "index.html"
-    regenerate(static, public)
-    generate_page(content, template, public_file)
+
+    setup_static_files(static, public)
+    generate_pages_recursive(content, template, public)
 
 
-def regenerate(static_dir, public_dir) -> None:
+def setup_static_files(static_dir, public_dir) -> None:
     if os.path.exists(public_dir):
         shutil.rmtree(public_dir)
     os.mkdir(public_dir)
