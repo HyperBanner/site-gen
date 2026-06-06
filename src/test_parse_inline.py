@@ -1,5 +1,5 @@
 import unittest
-from parsing import (
+from parse_inline import (
     split_nodes_delimiter,
     extract_markdown_images,
     extract_markdown_links,
