@@ -8,7 +8,7 @@ from generator_functions import generate_pages_recursive
 def main() -> None:
     basepath = "/"
     if sys.argv:
-        basepath = sys.argv[0]
+        basepath = sys.argv[1]
     # paths
     static = Path(__file__).resolve().parent.parent / "static"
     docs = Path(__file__).resolve().parent.parent / "docs"
