@@ -32,8 +32,8 @@ def generate_page(from_path, template_path, dest_path, basepath) -> None:
     page = (
         template.replace("{{ Title }}", title)
         .replace("{{ Content }}", body)
-        .replace('href="/', f'href="{basepath}')
-        .replace('src="/', f'src="{basepath}')
+        .replace('href="/', f'href="{basepath}/')
+        .replace('src="/', f'src="{basepath}/')
     )
 
     # make sure dirs exist
