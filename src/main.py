@@ -1,23 +1,28 @@
 import os
 import shutil
 from pathlib import Path
+from generator_functions import generate_page
 
 
 def main() -> None:
-    copy_static_to_public()
+    static = Path(__file__).resolve().parent.parent / "static"
+    public = Path(__file__).resolve().parent.parent / "public"
+    content = Path(__file__).resolve().parent.parent / "content" / "index.md"
+    template = Path(__file__).resolve().parent.parent / "template.html"
+    public_file = Path(__file__).resolve().parent.parent / "public" / "index.html"
+    regenerate(static, public)
+    generate_page(content, template, public_file)
 
 
-def copy_static_to_public() -> None:
-    source_dir = Path(__file__).resolve().parent.parent / "static"
-    dest_dir = Path(__file__).resolve().parent.parent / "public"
-    if os.path.exists(dest_dir):
-        shutil.rmtree(dest_dir)
-    os.mkdir(dest_dir)
+def regenerate(static_dir, public_dir) -> None:
+    if os.path.exists(public_dir):
+        shutil.rmtree(public_dir)
+    os.mkdir(public_dir)
     print("Destination directory cleaned")
-    copy_tree(source_dir, dest_dir)
+    copy_tree(static_dir, public_dir)
 
 
-# helper func for copy_static_to_public
+# helper func for regenerate
 def copy_tree(source_dir, dest_dir) -> None:
     items = os.listdir(source_dir)
     for item in items:
@@ -25,10 +30,10 @@ def copy_tree(source_dir, dest_dir) -> None:
         dest_item_path = os.path.join(dest_dir, item)
         if os.path.isfile(item_path):
             shutil.copy(item_path, dest_dir)
-            print(f"Copied file to path: '{dest_item_path}' from: '{item_path}'")
+            print(f"Copied file from path: '{item_path}' to: '{dest_item_path}'")
         elif os.path.isdir(item_path):
             os.mkdir(dest_item_path)
-            print(f"Made directory to path: '{dest_item_path}' from: '{item_path}'")
+            print(f"Made directory from path: '{item_path}' to: '{dest_item_path}'")
             copy_tree(item_path, dest_item_path)
 
 
